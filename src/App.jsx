@@ -1,4 +1,4 @@
-import { useState, useEffect, useOptimistic, useTransition } from 'react'
+import { useState, useEffect } from 'react'
 
 async function fetchTodos() {
   const response = await fetch('http://localhost:8080/api/todos')
@@ -27,38 +27,35 @@ function App() {
 
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState('');
+  const [isPending, setIsPending] = useState(false);
 
 
   useEffect(() => {
     fetchTodos().then(setTodos)
   }, [])
 
-  const [optimisticTodos, setOptimisticTodos] = useOptimistic(todos);
-
-  const [isPending, startTransition] = useTransition();
-
   
   async function addNewTodo() {
-    setOptimisticTodos((todos) => [
-      ...todos,
-      { id: Math.random().toString(36).slice(2), text: newTodo }
-    ]);
+    setIsPending(true);
 
     try {
       await addTodo(newTodo);
-      setTodos(await fetchTodos());
-    } catch (error) {
+      const todos = await fetchTodos();
+      setTodos(todos);
+    } catch (error) { 
       console.log(error);
     } finally {
       setNewTodo('');
+      setIsPending(false);
     }
   }
 
   return (
     <>
       <ul>
-        {optimisticTodos.map(todo => <li key={todo.id}>{todo.text}</li>)}
+        {todos.map(todo => <li key={todo.id}>{todo.text}</li>)}
       </ul>
+      {isPending && <p>Loading...</p>}
       <div>
         <input
           type='text'
@@ -67,7 +64,7 @@ function App() {
           onChange={e => setNewTodo(e.target.value)}
           onKeyUp={(e) => {
             if (e.key === 'Enter') {
-              startTransition(() => addNewTodo());
+              addNewTodo();
             }
           }}
         />
