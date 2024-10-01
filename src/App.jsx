@@ -39,7 +39,7 @@ function App() {
     setIsPending(true);
 
     try {
-      await addTodo(newTodo); // This is being intentially delayed to 3 seconds.
+      await addTodo(newTodo); // This is being intentionally delayed to 3 seconds.
       const todos = await fetchTodos(); // Then we fecth our todos again (there are for sure better ways to do this, but is just an example).
       setTodos(todos); // Finally, after the delay, we update our state
     } catch (error) { 
