@@ -25,9 +25,9 @@ async function addTodo(text) {
 
 function App() {
 
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState([]); // 1️⃣ The state for the todos in our component
   const [newTodo, setNewTodo] = useState('');
-  const [isPending, setIsPending] = useState(false);
+  const [isPending, setIsPending] = useState(false); // 2️⃣ isPending state to use it for the loading indicator
 
 
   useEffect(() => {
@@ -35,13 +35,13 @@ function App() {
   }, [])
 
   
-  async function addNewTodo() {
+  async function addNewTodo() { // 3️⃣ Fucntion to add a new todo
     setIsPending(true);
 
     try {
-      await addTodo(newTodo);
-      const todos = await fetchTodos();
-      setTodos(todos);
+      await addTodo(newTodo); // This is being intentially delayed to 3 seconds.
+      const todos = await fetchTodos(); // Then we fecth our todos again (there are for sure better ways to do this, but is just an example).
+      setTodos(todos); // Finally, after the delay, we update our state
     } catch (error) { 
       console.log(error);
     } finally {
@@ -55,8 +55,16 @@ function App() {
       <ul>
         {todos.map(todo => <li key={todo.id}>{todo.text}</li>)}
       </ul>
-      {isPending && <p>Loading...</p>}
       <div>
+        
+        {/* 
+          4️⃣ Input for adding new todo 
+          - Use `onKeyUp` to add a new todo when `Enter` is pressed
+          - Use `disabled` to disable the input if `isPending` is true
+          - And also show a loading indicator if `isPending` is true
+        */}
+
+        {isPending && <p>Loading...</p>}
         <input
           type='text'
           value={newTodo}
