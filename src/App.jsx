@@ -67,6 +67,7 @@ function App() {
 
   return (
     <>
+      <h1>Optimistic todos</h1>
       <ul>
         {optimisticTodos.map(todo => <li key={todo.id}>{todo.text}</li>)}
       </ul>
